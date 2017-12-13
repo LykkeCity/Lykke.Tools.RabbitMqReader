@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Tools.RabbitMqReader", "src\Lykke.Tools.RabbitMqReader\Lykke.Tools.RabbitMqReader.csproj", "{A5D95E7E-E873-40F6-90F6-7D0D9A4E7247}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5D95E7E-E873-40F6-90F6-7D0D9A4E7247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5D95E7E-E873-40F6-90F6-7D0D9A4E7247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5D95E7E-E873-40F6-90F6-7D0D9A4E7247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5D95E7E-E873-40F6-90F6-7D0D9A4E7247}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98F6B5CE-2EE6-4B19-B5C8-BA0224C48EAC}
+	EndGlobalSection
+EndGlobal
