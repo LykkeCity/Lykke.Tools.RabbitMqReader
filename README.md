@@ -26,5 +26,5 @@ Awailable options:
 Run example:
 
 ```
--c amqp://user:password@rabbit-host:5672 -e lykke.candles -f json -s *** -o log.txt -a
+dotnet Lykke.Tools.RabbitMqReader.dll -c amqp://user:password@rabbit-host:5672 -e lykke.candles -f json -s *** -o log.txt -a
 ```
