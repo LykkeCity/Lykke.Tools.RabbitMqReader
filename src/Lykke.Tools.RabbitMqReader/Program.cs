@@ -2,13 +2,13 @@
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
 using Fclp;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
-using MessagePack;
 using Newtonsoft.Json;
 
 namespace Lykke.Tools.RabbitMqReader
@@ -24,8 +24,9 @@ namespace Lykke.Tools.RabbitMqReader
                 return;
             }
 
+            var filter = TryCreateFilter(appArguments);
             var outputWriter = TryGetOutputWriter(appArguments);
-            var subscriber = TrySubscribe(appArguments, outputWriter);
+            var subscriber = TrySubscribe(appArguments, filter, outputWriter);
 
             if (subscriber == null)
             {
@@ -47,7 +48,19 @@ namespace Lykke.Tools.RabbitMqReader
             }
         }
 
-        private static IStopable TrySubscribe(AppArguments appArguments, StreamWriter outputWriter)
+        private static Regex TryCreateFilter(AppArguments appArguments)
+        {
+            if (appArguments.Filter == null)
+            {
+                return null;
+            }
+
+            Console.WriteLine($"Filter: \"{appArguments.Filter}\"");
+
+            return new Regex(appArguments.Filter, RegexOptions.Compiled);
+        }
+
+        private static IStopable TrySubscribe(AppArguments appArguments, Regex filter, StreamWriter outputWriter)
         {
             Console.WriteLine("Subscribing...");
 
@@ -62,7 +75,7 @@ namespace Lykke.Tools.RabbitMqReader
                     ReconnectionsCountToAlarm = -1,
                     ReconnectionDelay = TimeSpan.FromSeconds(5)
                 };
-                var subscriber = new RabbitMqSubscriber<dynamic>(
+                var subscriber = new RabbitMqSubscriber<object>(
                         settings,
                         new DefaultErrorHandlingStrategy(new LogToConsole(), settings))
                     .CreateDefaultBinding()
@@ -73,6 +86,14 @@ namespace Lykke.Tools.RabbitMqReader
                         message =>
                         {
                             var userMessage = JsonConvert.SerializeObject(message, Formatting.Indented);
+
+                            if (filter != null)
+                            {
+                                if (!filter.IsMatch(userMessage))
+                                {
+                                    return Task.CompletedTask;
+                                }
+                            }
 
                             Console.WriteLine(userMessage);
                             
@@ -100,14 +121,14 @@ namespace Lykke.Tools.RabbitMqReader
             }
         }
 
-        private static IMessageDeserializer<dynamic> GetDeserializer(MessageFormat format)
+        private static IMessageDeserializer<object> GetDeserializer(MessageFormat format)
         {
             switch (format)
             {
                 case MessageFormat.Json:
-                    return new JsonMessageDeserializer<dynamic>();
+                    return new JsonMessageDeserializer<object>();
                 case MessageFormat.MessagePack:
-                    return new MessagePackMessageDeserializer<dynamic>();
+                    return new MessagePackMessageDeserializer<object>();
                 default:
                     throw new InvalidEnumArgumentException(nameof(format), (int)format, typeof(MessageFormat));
 
@@ -166,6 +187,11 @@ namespace Lykke.Tools.RabbitMqReader
                 .As('s')
                 .SetDefault(null)
                 .WithDescription("-s <separator>: Message separation text. Optional, default is empty");
+
+            parser.Setup(x => x.Filter)
+                .As("filter")
+                .SetDefault(null)
+                .WithDescription("--filter <regexp>: Message filter regexp. Example: \"EURUSD\"");
 
             var parsingResult = parser.Parse(args);
 

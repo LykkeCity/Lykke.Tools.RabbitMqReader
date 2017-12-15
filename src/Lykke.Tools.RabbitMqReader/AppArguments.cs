@@ -8,5 +8,6 @@
         public string MessageSeparator { get; set; }
         public string OutputFilePath { get; set; }
         public bool AppendOutput { get; set; }
+        public string Filter { get; set; }
     }
 }

@@ -21,10 +21,11 @@ Awailable options:
  -f <format:{json, messagepack}>: Message format. Optional, default is json
  -o <file>: Output file path. Optional, default is empty
  -s <separator>: Message separation text. Optional, default is empty
+ --filter <regexp>: Message filter regexp. Example: "EURUSD"
 ```
 
 Run example:
 
 ```
--c amqp://user:password@rabbit-host:5672 -e lykke.candles -f json -s *** -o log.txt -a
+-c amqp://user:password@rabbit-host:5672 -e lykke.candles -f json -s *** -o log.txt -a --filter ""EURUSD""
 ```
